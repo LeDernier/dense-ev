@@ -67,7 +67,7 @@ def random_H(N):
     return H
 
 
-def test_random_H(m):
+def check_random_H(m):
     N = pow(2, m)
     evs = random_evals(N)
     D = np.diag(evs)
@@ -75,9 +75,11 @@ def test_random_H(m):
     H = dot_all([U, D, hc(U)])
     vals, vecs = eig(H)
 
-    print(evs)
-    print(D)
-    print(vals)
+    # Sort eigenvalues.
+    evs = np.sort(evs)
+    vals = np.sort(vals)
+
+    return np.isclose(evs, vals).all()
 
 
 def array_to_Op(Hmat):
@@ -196,13 +198,13 @@ def get_groups2(H, m):
     """
     # Will primitive.paulis include the full set irrespective of H?
     id_list = [str(x) for x in primitive.paulis]
-    
+
     ## all the Pauli operators with a coefficient equal to zero in the decomposition are converted into the identity,
     ## so, we have to save the pointer to the "true" coefficient associated to the identity (otherwise, it will be zero)
     identity_string = id_list[0]
-    id_dict = { id_list[x]: x for x in range(len(id_list))}
+    id_dict = {id_list[x]: x for x in range(len(id_list))}
     id_dict[identity_string] = 0
-    #print('id_dict:', id_dict)
+    # print('id_dict:', id_dict)
 
     res = []
     for family in PO.f:
@@ -268,6 +270,7 @@ def get_Op(Hmat, optype):
 
 if __name__ == "__main__":
     # print(get_groups(2))
-    Hmat = random_H(8)
+    # Hmat = random_H(8)
     # print(array_to_SummedOp(Hmat))
-    print(get_Op(Hmat, "abelian"))
+    # print(get_Op(Hmat, "abelian"))
+    print(test_random_H(3))
